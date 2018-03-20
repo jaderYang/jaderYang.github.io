@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,oc," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="现在的App中，对照片和视频的操作非常频繁，如：各类软件个人图像的选取，社交软件照片及视频的分享，评论上图等。。 iOS8中更新的PHImageManager对于想要操控手机图片或视频的程序猿们无疑是最好的选择。 获取手机照片并回显大家都应该用过手机QQ，当我们要用QQ发送图片给小伙伴时，点击发送图片icon，QQ会非常贴心的将最近几张照片给我们呈现出来，供我们选择。用PHImageManager">
+<meta name="keywords" content="iOS,oc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHImageManage详解">
+<meta property="og:url" content="http://yoursite.com/2015/12/22/PHImageManager/index.html">
+<meta property="og:site_name" content="jaderYang&#39;s Notes">
+<meta property="og:description" content="现在的App中，对照片和视频的操作非常频繁，如：各类软件个人图像的选取，社交软件照片及视频的分享，评论上图等。。 iOS8中更新的PHImageManager对于想要操控手机图片或视频的程序猿们无疑是最好的选择。 获取手机照片并回显大家都应该用过手机QQ，当我们要用QQ发送图片给小伙伴时，点击发送图片icon，QQ会非常贴心的将最近几张照片给我们呈现出来，供我们选择。用PHImageManager">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20151222202853081">
+<meta property="og:updated_time" content="2018-03-20T00:30:51.491Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHImageManage详解">
+<meta name="twitter:description" content="现在的App中，对照片和视频的操作非常频繁，如：各类软件个人图像的选取，社交软件照片及视频的分享，评论上图等。。 iOS8中更新的PHImageManager对于想要操控手机图片或视频的程序猿们无疑是最好的选择。 获取手机照片并回显大家都应该用过手机QQ，当我们要用QQ发送图片给小伙伴时，点击发送图片icon，QQ会非常贴心的将最近几张照片给我们呈现出来，供我们选择。用PHImageManager">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20151222202853081">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2015/12/22/PHImageManager/"/>
+
+
+
+
+
+  <title>PHImageManage详解 | jaderYang's Notes</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">jaderYang's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">just do IT</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/12/22/PHImageManager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jaderyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jaderYang's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PHImageManage详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-22T18:24:00+08:00">
+                2015-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>现在的App中，对照片和视频的操作非常频繁，如：各类软件个人图像的选取，社交软件照片及视频的分享，评论上图等。。</p>
+<p>iOS8中更新的PHImageManager对于想要操控手机图片或视频的程序猿们无疑是最好的选择。</p>
+<h4 id="获取手机照片并回显"><a href="#获取手机照片并回显" class="headerlink" title="获取手机照片并回显"></a>获取手机照片并回显</h4><p>大家都应该用过手机QQ，当我们要用QQ发送图片给小伙伴时，点击发送图片icon，QQ会非常贴心的将最近几张照片给我们呈现出来，供我们选择。用<code>PHImageManager</code>能很快的实现这样一个功能。在此做个简单的类似的实现：</p>
+<ol>
+<li><p>在项目build phase中添加Libraries Photos.framework 并在vc中引入头文件</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Photos/Photos.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取访问照片权限</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)requestPermissons</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//获取当前状态：PHAuthorizationStatusNotDetermined--未知</span></span><br><span class="line">    <span class="comment">//            PHAuthorizationStatusRestricted--受限制的(用户不能更改某个App的此状态，或许某些活动限制设置能改变如：家长模式）</span></span><br><span class="line">    <span class="comment">//            PHAuthorizationStatusDenied--拒绝访问</span></span><br><span class="line">    <span class="comment">//            PHAuthorizationStatusAuthorized--可以访问</span></span><br><span class="line">    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];</span><br><span class="line">    __<span class="keyword">weak</span> RCCachingLocalImage *weakSelf = <span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">if</span> (status == PHAuthorizationStatusNotDetermined) &#123;</span><br><span class="line">        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) &#123;</span><br><span class="line">            <span class="keyword">if</span> (status == PHAuthorizationStatusAuthorized) &#123;</span><br><span class="line">                <span class="comment">//获取手机照片库</span></span><br><span class="line">                <span class="comment">//[weakSelf loadImages];</span></span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//弹出提示信息</span></span><br><span class="line">                [weakSelf alertMsg];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(status == PHAuthorizationStatusAuthorized)&#123;</span><br><span class="line">        <span class="comment">//获取手机照片库</span></span><br><span class="line">        <span class="comment">//[self loadImages];</span></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">//弹出提示信息</span></span><br><span class="line">        [<span class="keyword">self</span> alertMsg];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>构建这样一个场景:在当前<code>viewcontroller</code>中点击button 然后全屏显示最新拍摄的照片或者截屏图片。UI代码如下：</p>
+<p>在Extension中定义全局变量</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">@interface</span>  <span class="title">RCCachingLocalImage</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *assets;<span class="comment">//用于存储所有的照片。</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">UIButton</span> *showImgBnt;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">UIImageView</span> *imgView;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>然后再.m中加入</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"> - (<span class="keyword">void</span>)viewDidLoad</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="keyword">self</span>.view.backgroundColor = [<span class="built_in">UIColor</span> whiteColor];</span><br><span class="line"></span><br><span class="line">    [<span class="keyword">self</span> requestPermissons];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UIButton</span> *navButton = [<span class="built_in">UIButton</span> new];</span><br><span class="line">    navButton.frame = <span class="built_in">CGRectMake</span>(<span class="number">130</span>, <span class="built_in">CGRectGetHeight</span>(<span class="keyword">self</span>.view.frame) - <span class="number">200</span>,  <span class="built_in">CGRectGetWidth</span>(<span class="keyword">self</span>.view.frame)<span class="number">-2</span>*<span class="number">130</span>, <span class="number">40</span>);</span><br><span class="line">    navButton.backgroundColor = [<span class="built_in">UIColor</span> blueColor];</span><br><span class="line">    [navButton setTitle:<span class="string">@"Show Image"</span> forState:<span class="built_in">UIControlStateNormal</span>];</span><br><span class="line">    [navButton addTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(showImage) forControlEvents:<span class="built_in">UIControlEventTouchUpInside</span>];</span><br><span class="line">    [<span class="keyword">self</span>.view addSubview:navButton];</span><br><span class="line">    <span class="keyword">self</span>.showImgBtn = navButton;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UIImageView</span> *imageView = [<span class="built_in">UIImageView</span> new];</span><br><span class="line">    imageView.backgroundColor = [<span class="built_in">UIColor</span> greenColor];</span><br><span class="line">    imageView.frame = <span class="keyword">self</span>.view.frame;</span><br><span class="line">    [<span class="keyword">self</span>.view addSubview:imageView];</span><br><span class="line">    <span class="keyword">self</span>.imgView = imageView;</span><br><span class="line">    <span class="keyword">self</span>.imgView.hidden = <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现showImage方法 显示图片，隐藏Button</p>
+</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)showImage</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span>.showImgBnt.hidden = <span class="literal">YES</span>;</span><br><span class="line">    <span class="keyword">self</span>.imgView.hidden = <span class="literal">NO</span>;</span><br><span class="line">    <span class="comment">//获取相册里所有的照片</span></span><br><span class="line">    PHFetchResult *result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:<span class="literal">nil</span>];</span><br><span class="line">    <span class="keyword">self</span>.assets = [[<span class="built_in">NSMutableArray</span> alloc] init];</span><br><span class="line">    [result enumerateObjectsUsingBlock:^(<span class="keyword">id</span>  _Nonnull obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> * _Nonnull stop) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([obj isKindOfClass:[PHAsset <span class="keyword">class</span>]]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.assets addObject:obj];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">    <span class="comment">//最后一张图为最新</span></span><br><span class="line">    PHAsset *asset = [<span class="keyword">self</span>.assets lastObject];</span><br><span class="line">    PHImageManager *manager = [PHImageManager defaultManager];</span><br><span class="line"></span><br><span class="line">    [manager requestImageForAsset:asset</span><br><span class="line">                       targetSize:PHImageManagerMaximumSize</span><br><span class="line">                      contentMode:PHImageContentModeAspectFill</span><br><span class="line">                          options:<span class="literal">nil</span></span><br><span class="line">                    resultHandler:^(<span class="built_in">UIImage</span> * _Nullable result, <span class="built_in">NSDictionary</span> * _Nullable info) &#123;</span><br><span class="line">                        [<span class="keyword">self</span>.imgView setImage:result];</span><br><span class="line">                    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有两个方法看着比较陌生<br>第一个：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ (PHFetchResult&lt;PHAsset *&gt; *)fetchAssetsWithMediaType:(PHAssetMediaType)mediaType options:(<span class="keyword">nullable</span> PHFetchOptions *)options;</span><br></pre></td></tr></table></figure>
+<p>该方法用作遍历资源库 返回特定类型的资源，mediaType可选四个值,对应关系分别为:</p>
+<ul>
+<li><code>PHAssetMediaTypeUnknown</code>–所有</li>
+<li><code>PHAssetMediaTypeImage</code>–图片</li>
+<li><code>PHAssetMediaTypeVideo</code>–视频  </li>
+<li><code>PHAssetMediaTypeAudio</code>–音频</li>
+<li><code>PHFetchResult</code>对应一组资源</li>
+<li><code>PHAsset</code>对应单个资源</li>
+<li><code>options</code>是搜索条件</li>
+</ul>
+<p>如：搜索自己喜爱的照片 并且按照时间上升顺序排列：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PHFetchOptions *option = [[PHFetchOptions alloc] init];</span><br><span class="line">option.predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"favorite == YES"</span>];</span><br><span class="line">option.sortDescriptors = @[[<span class="built_in">NSSortDescriptor</span> sortDescriptorWithKey:<span class="string">@"creationDate"</span> ascending:<span class="literal">YES</span>]];</span><br><span class="line">PHFetchResult *result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:option];</span><br></pre></td></tr></table></figure>
+<p>第二个：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (PHImageRequestID)requestImageForAsset:(PHAsset *)asset targetSize:(<span class="built_in">CGSize</span>)targetSize contentMode:(PHImageContentMode)contentMode options:(<span class="keyword">nullable</span> PHImageRequestOptions *)options resultHandler:(<span class="keyword">void</span> (^)(<span class="built_in">UIImage</span> *__<span class="keyword">nullable</span> result, <span class="built_in">NSDictionary</span> *__<span class="keyword">nullable</span> info))resultHandler;</span><br></pre></td></tr></table></figure>
+<p>该方法用作获取特定的<code>PHAsset</code>所对应的图片,返回值为<code>PHImageRequestID</code>类型(实际上是32位int类型)的ID,可以用作取消加载还未加载完成的该请求。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)cancelImageRequest:(PHImageRequestID)requestID;</span><br></pre></td></tr></table></figure>
+<p>targetSize是你所需要返回的image尺寸,<code>PHImageManagerMaximumSize</code>为原图片尺寸<br>contentMode是如果原image尺寸与targetSize不相等，用哪种填充的mode，有两个可选值：<code>PHImageContentModeAspectFill</code>–缩放长宽完全填充<code>PHImageContentModeAspectFit</code>–只缩放长宽中比较大的那个，来等于targetSize。<br>options：定义请求方式，可为nil，下文会详细介绍，<br><code>resultHandler:block</code> 当image完全请求过来后调用。</p>
+<p>现在 运行程序就能看到效果啦。</p>
+<h4 id="获取图片并缓存"><a href="#获取图片并缓存" class="headerlink" title="获取图片并缓存"></a>获取图片并缓存</h4><p>如果需求为要在一个页面，同时显示大量图片，for循环调用上诉方法肯定是不行的，<code>requestImageForAsset</code>会有延时，而达到这一效果，我们可以先缓存下来所有的图片，然后用<code>requestImageForAsset</code>,根据<code>PHImageManage</code>的加载机制，能做到同时显示。<br>缓存图片方法代码如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)loadImages</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"loadImages"</span>);</span><br><span class="line">    PHFetchResult *result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:<span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%lu"</span>,[result count]);</span><br><span class="line">    <span class="keyword">self</span>.assets = [[<span class="built_in">NSMutableArray</span> alloc] init];</span><br><span class="line">    [result enumerateObjectsUsingBlock:^(<span class="keyword">id</span>  _Nonnull obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> * _Nonnull stop) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([obj isKindOfClass:[PHAsset <span class="keyword">class</span>]]) &#123;</span><br><span class="line">            [<span class="keyword">self</span>.assets addObject:obj];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">    PHCachingImageManager *cachingImage = [[PHCachingImageManager alloc] init];</span><br><span class="line">    [cachingImage startCachingImagesForAssets:<span class="keyword">self</span>.assets</span><br><span class="line">                                   targetSize:PHImageManagerMaximumSize</span><br><span class="line">                                  contentMode:PHImageContentModeAspectFit</span><br><span class="line">                                      options:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过此缓存后,再用<code>RequestImageForAsset:targetSize:contentMode:options:resultHandler:</code>方法时便能直接从缓存中加载image，从而直接执行resultHandler内的block,特别注意，无延时加载的前提条件是，此时的targetSize 与 缓存时的targetSize必须一样，不然此方法会去图片库重新请求资源加载成image而不会走缓存。</p>
+<h4 id="图片请求回显方式详解-PHImageRequestOptions"><a href="#图片请求回显方式详解-PHImageRequestOptions" class="headerlink" title="图片请求回显方式详解 PHImageRequestOptions"></a>图片请求回显方式详解 PHImageRequestOptions</h4><p>之前的RequestImageForAsset 和 startCachingImagesForAssets两个方法中 option都设置的是nil。PHImageRequestOptions是用来控制加载什么一级用什么样的方式。下面介绍其主要属性：</p>
+<ul>
+<li>networkAccessAllowed <em>Bool</em>    如果需要，是否允许从iCloud下载图片。</li>
+<li>normalizedCropRect <em>CGRect</em>    指定一个rect来截取原图片,rect以原图片为坐标系。</li>
+<li>synchronous <em>Bool</em> 同步加载。默认是NO。(只有当resultHandler block执行完后 该方法才执行完毕)。</li>
+<li>deliveryMode <em>PHImageRequestOptionsDeliveryMode</em></li>
+<li>PHImageRequestOptionsDeliveryMode是一个enum类型的，它囊括了非常复杂的操作，有三个值分别对应：</li>
+</ul>
+<ul>
+<li><code>PHImageRequestOptionsDeliveryModeOpportunistic</code> 当选用此项时，Photos会在你请求时给你提供一个或者多个结果，这就意味着resultHandler block可能会执行一次或多次，例如<br>Photos会先给你一个低分辨率的图片让你暂时显示，然后加载出高质量的图片后再次给你。如果PHImageManager已经pre-cache了图片，那result handler便只会执行一次。另外，如果synchronous属性为NO,此选项是不起作用的。</li>
+<li><code>PHImageRequestOptionsDeliveryModeHighQualityFormat</code>当请求image时 不管请求需要多长时间完成，Photos只会提供高质量的image。另外，当synhronous属性为YES 或者使用requestImageDataForAsset:options:resultHandler: 方法时，这个选项是默认且唯一的。</li>
+<li><code>PHImageRequestOptionsDeliveryModeFastFormat</code> 当请求image时，高质量的图片或低质量的图片，谁加载的快 便显示谁。另外Photos也能通过检查info字典(<code>resultHandler</code>中的参数)里的<code>PHImageResultIsDegradedKey</code>值来判定传高质量或者低质量的图片。</li>
+</ul>
+<p>之前运行时，应该能发现 在图片出现前会有短暂的图片背景色显示。现在我们加上option后再请求图片：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)showImage</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span>.showImgBnt.hidden = <span class="literal">YES</span>;</span><br><span class="line">    <span class="keyword">self</span>.imgView.hidden = <span class="literal">NO</span>;</span><br><span class="line">    PHAsset *asset = [<span class="keyword">self</span>.assets firstObject];</span><br><span class="line">    PHImageManager *manager = [PHImageManager defaultManager];</span><br><span class="line">    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];</span><br><span class="line">    option.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;</span><br><span class="line">    option.synchronous = <span class="literal">YES</span>;</span><br><span class="line">    [manager requestImageForAsset:asset</span><br><span class="line">                       targetSize:PHImageManagerMaximumSize</span><br><span class="line">                      contentMode:PHImageContentModeAspectFill options:option</span><br><span class="line">                    resultHandler:^(<span class="built_in">UIImage</span> * _Nullable result, <span class="built_in">NSDictionary</span> * _Nullable info) &#123;</span><br><span class="line">                        [<span class="keyword">self</span>.imgView setImage:result];</span><br><span class="line">                    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此时便不会有那个问题了。</p>
+<p>ps:关于<code>PHImageRequestOptionsDeliveryMode</code> <code>enum</code>中值的意思我是翻译的Apple官方文档，其中有一个逻辑错误就是，按照官方文档逻辑来看，在任何情况下<code>PHImageRequestOptionsDeliveryModeOpportunistic</code>属性都不会起作用。对此问题我也google过，然后发现mattt大大的文章中也是直接搬过来的，在Twitter上问了他，问题确实存在，以下是我与他的私信过程：<br><img src="http://img.blog.csdn.net/20151222202853081" alt="这里写图片描述"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/oc/" rel="tag"># oc</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/08/datasource-protocol/" rel="prev" title="自定义控件 -- 使用DataSource">
+                自定义控件 -- 使用DataSource <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="jaderyang" />
+          <p class="site-author-name" itemprop="name">jaderyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时,直挂云帆济沧海</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取手机照片并回显"><span class="nav-number">1.</span> <span class="nav-text">获取手机照片并回显</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取图片并缓存"><span class="nav-number">2.</span> <span class="nav-text">获取图片并缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片请求回显方式详解-PHImageRequestOptions"><span class="nav-number">3.</span> <span class="nav-text">图片请求回显方式详解 PHImageRequestOptions</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jaderyang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="theme-info">
+  <span class="post-count">博客全站共7.8k字</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

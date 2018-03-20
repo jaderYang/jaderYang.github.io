@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,OC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="前言我是个记性比较差的人，做ios开发时间也不短了。在实际开发的时候，有些基础的东西常常会跑网上查了然后piapiapia实现，最后自己没理解透彻，给人讲也是讲不清楚。 开始写点东西主要有两个原因：  目前自己独立开发一个app，遇到的坎蛮多，一步步跨过，想留下点脚印； WWDC2017要开了，swift3.1也要发布了，感觉稳定性应该会大步提升，之后我肯定会转向那边，写些知识点，之后学习swif">
+<meta name="keywords" content="iOS,OC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义控件 -- 使用DataSource">
+<meta property="og:url" content="http://yoursite.com/2017/04/08/datasource-protocol/index.html">
+<meta property="og:site_name" content="jaderYang&#39;s Notes">
+<meta property="og:description" content="前言我是个记性比较差的人，做ios开发时间也不短了。在实际开发的时候，有些基础的东西常常会跑网上查了然后piapiapia实现，最后自己没理解透彻，给人讲也是讲不清楚。 开始写点东西主要有两个原因：  目前自己独立开发一个app，遇到的坎蛮多，一步步跨过，想留下点脚印； WWDC2017要开了，swift3.1也要发布了，感觉稳定性应该会大步提升，之后我肯定会转向那边，写些知识点，之后学习swif">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3190264-785ed1f4f45f72a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3190264-8f45840cd23d25d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-03-20T00:08:30.157Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义控件 -- 使用DataSource">
+<meta name="twitter:description" content="前言我是个记性比较差的人，做ios开发时间也不短了。在实际开发的时候，有些基础的东西常常会跑网上查了然后piapiapia实现，最后自己没理解透彻，给人讲也是讲不清楚。 开始写点东西主要有两个原因：  目前自己独立开发一个app，遇到的坎蛮多，一步步跨过，想留下点脚印； WWDC2017要开了，swift3.1也要发布了，感觉稳定性应该会大步提升，之后我肯定会转向那边，写些知识点，之后学习swif">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3190264-785ed1f4f45f72a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/08/datasource-protocol/"/>
+
+
+
+
+
+  <title>自定义控件 -- 使用DataSource | jaderYang's Notes</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">jaderYang's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">just do IT</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/datasource-protocol/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jaderyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jaderYang's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义控件 -- 使用DataSource</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T18:24:00+08:00">
+                2017-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我是个记性比较差的人，做ios开发时间也不短了。在实际开发的时候，有些基础的东西常常会跑网上查了然后piapiapia实现，最后自己没理解透彻，给人讲也是讲不清楚。</p>
+<p>开始写点东西主要有两个原因：</p>
+<ol>
+<li>目前自己独立开发一个app，遇到的坎蛮多，一步步跨过，想留下点脚印；</li>
+<li><code>WWDC2017</code>要开了，<code>swift3.1</code>也要发布了，感觉稳定性应该会大步提升，之后我肯定会转向那边，写些知识点，之后学习swift的时候方便对照验证。</li>
+</ol>
+<p>最后一句话送给somebody – <em>It’s never too late to start</em>.</p>
+<h2 id="遇坎场景"><a href="#遇坎场景" class="headerlink" title="遇坎场景"></a>遇坎场景</h2><p>今天写一个界面的时候，需要自定义个segment，按以前的思路来：</p>
+<ol>
+<li>最直接，最快，最省事的做法 – 按现在的美工图来，有几个选项写几个选项。控件所有内容写死。</li>
+<li>考虑到后期有数据变更，常用的做法 – 在segment初始化的时候，自定义<code>init</code>方法把参数带过去。</li>
+</ol>
+<p>我原本打算用方法2直接开干了。但是想到<code>UITableView</code>能那么优雅的通过<code>UITableViewDataSource</code> 确定行数，能定制每行视图，能定制每个<code>section</code>的<code>title</code>… 便思考了下如何实现一个可由<code>DataSource</code>控制的控件。</p>
+<h2 id="求索过程"><a href="#求索过程" class="headerlink" title="求索过程"></a>求索过程</h2><h4 id="DataSource是什么"><a href="#DataSource是什么" class="headerlink" title="DataSource是什么?"></a><code>DataSource</code>是什么?</h4><p><code>DataSource</code>的本质是 遵循了特定协议（<code>Protocol</code>）的对象。它管理着app显示的内容。拿最常用的<code>UITableView</code>举例，在服装列表界面需要用<code>UITableView</code>来实现一系列需要展示的商品，我们常常会写:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tableView.dataSource = <span class="keyword">self</span>;</span><br><span class="line">[<span class="keyword">self</span>.view addSubview:tableView];</span><br></pre></td></tr></table></figure>
+<p>这时候<code>self</code>这个<code>ViewController</code>就是<code>tableView</code>的<code>dataSource</code>。当然前提是<code>ViewController</code>遵循了<code>UITableViewDataSource</code>协议，而且在<code>ViewController</code>内重写了<code>UITableViewDataSource</code>必须实现（<code>@ required</code>标注下）的方法。</p>
+<p>协议在此处的作用就是规定<code>DataSource</code>必须实现的方法以及其他可选择实现方法的格式。如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">UITableViewDataSource</span>&lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"><span class="comment">//必须重写</span></span><br><span class="line"><span class="keyword">@required</span></span><br><span class="line"><span class="comment">//需要展示的section的数量</span></span><br><span class="line">- (<span class="built_in">NSInteger</span>)tableView:(<span class="built_in">UITableView</span> *)tableView numberOfRowsInSection:(<span class="built_in">NSInteger</span>)section;</span><br><span class="line"><span class="comment">//需要展示的单个cell</span></span><br><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</span><br><span class="line"></span><br><span class="line"><span class="comment">//选择性重写</span></span><br><span class="line"><span class="keyword">@optional</span></span><br><span class="line"><span class="comment">//每个section下有几行数据 eg:如果不重写 则默认为1</span></span><br><span class="line">- (<span class="built_in">NSInteger</span>)numberOfSectionsInTableView:(<span class="built_in">UITableView</span> *)tableView;</span><br><span class="line"></span><br><span class="line"><span class="comment">//截取部分 其余的省略。。。。。</span></span><br></pre></td></tr></table></figure>
+<p>所以只要在<code>ViewController</code>中重写上诉的<code>@required</code>方法下的两个方法，根据自己的界面需求，返回相应的结果，即可以定制自己的tableview了。</p>
+<p>知道了<code>dataSource</code>的作用，那<code>dataSource</code>具体如何工作的呢？为什么在<code>ViewController</code>里遵循协议重写了<code>numberOfSectionsInTableView</code>方法就能定制<code>tableView</code>的<code>section</code>数量？</p>
+<p>####<code>DataSource</code>是如何实现的？</p>
+<p><code>Protocol</code>是对象间通信的方式之一，其他方式还有<code>Taget/Action</code>, <code>KVO</code> ,<code>Block</code>, <code>Notification</code>, 之后可能会写个笔记详细记录下各自的使用情景。</p>
+<p>通信总是要事件去触发的，比如接受到某个通知， 比如点击某个按钮，再比如某个属性值变化了。。。</p>
+<p>对于<code>Protocol</code>来说一般某事件触发时，比如针对<code>UITableViewDelegate</code>,点击了某个<code>cell</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//纯属自己猜想 假设tableview源码里面的实现</span></span><br><span class="line">- (<span class="keyword">void</span>)cellClickAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath&#123;</span><br><span class="line">    <span class="comment">//1.判断VC是否遵循了UITableViewDelegate(也就是 tableview.delegate = self;这句有没有写。</span></span><br><span class="line">    <span class="comment">//2.判断VC是否重写了didSelectRowAtIndexPath方法。</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.delegate &amp;&amp; [<span class="keyword">self</span>.delegate respondsToSelector:<span class="keyword">@selector</span>(tableView:didSelectRowAtIndexPath:)]) &#123;</span><br><span class="line">        [<span class="keyword">self</span>.delegate tableView:<span class="keyword">self</span> didSelectRowAtIndexPath:indexPath];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么问题来了，<code>UITableViewDataSource</code>中方法的触发点在哪里呢？ 在<code>numberOfSectionsInTableView</code>方法处加入断点可以看到，除了初始化的时候执行了，<code>[TableView reloadData]</code>的时候也执行了。所以可以猜想，<code>tableView</code>在第一次显示的时候,自己调用了<code>reloadData</code>。 为了更细化的找出触发点，我自定义了一个<code>UITableView</code>的子类，来查看详细的执行过程。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CCCustomTableView</span> : <span class="title">UITableView</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">"CCCustomTableView.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">CCCustomTableView</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)didMoveToSuperview&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> didMoveToSuperview];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)didMoveToWindow&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> didMoveToWindow];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)layoutSubviews&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> layoutSubviews];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)layoutIfNeeded&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> layoutIfNeeded];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setDataSource:(<span class="keyword">id</span>&lt;<span class="built_in">UITableViewDataSource</span>&gt;)dataSource&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> setDataSource:dataSource];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setDelegate:(<span class="keyword">id</span>&lt;<span class="built_in">UITableViewDelegate</span>&gt;)delegate&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> setDelegate:delegate];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)reloadData&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    [<span class="keyword">super</span> reloadData];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后写个<code>ViewController</code>容器来实现它</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CCTableViewDatasouceTestViewController</span> : <span class="title">UIViewController</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">"CCTableViewDatasouceTestViewController.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"CCCustomTableView.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CCTableViewDatasouceTestViewController</span> ()&lt;<span class="title">UITableViewDelegate</span>, <span class="title">UITableViewDataSource</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">CCTableViewDatasouceTestViewController</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="keyword">self</span>.view.backgroundColor = [<span class="built_in">UIColor</span> whiteColor];</span><br><span class="line">    CCCustomTableView *tableView = [[CCCustomTableView alloc] initWithFrame:<span class="built_in">CGRectZero</span> style:<span class="built_in">UITableViewStylePlain</span>];</span><br><span class="line">    [<span class="keyword">self</span>.view addSubview:tableView];</span><br><span class="line">    [tableView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</span><br><span class="line">        make.edges.equalTo(tableView.superview);</span><br><span class="line">    &#125;];</span><br><span class="line">    tableView.dataSource = <span class="keyword">self</span>;</span><br><span class="line">    tableView.delegate = <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewWillAppear:(<span class="built_in">BOOL</span>)animated&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewWillAppear:animated];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>, __func__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidAppear:(<span class="built_in">BOOL</span>)animated&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidAppear:animated];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>, __func__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLayoutSubviews&#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLayoutSubviews];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>, __func__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSInteger</span>)numberOfSectionsInTableView:(<span class="built_in">UITableView</span> *)tableView&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSInteger</span>)tableView:(<span class="built_in">UITableView</span> *)tableView numberOfRowsInSection:(<span class="built_in">NSInteger</span>)section&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%s"</span>,__func__);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath&#123;</span><br><span class="line">    <span class="built_in">UITableViewCell</span> *cell = [tableView dequeueReusableCellWithIdentifier:<span class="built_in">NSStringFromClass</span>([<span class="keyword">self</span> <span class="keyword">class</span>])];</span><br><span class="line">    <span class="keyword">if</span> (!cell) &#123;</span><br><span class="line">        cell = [[<span class="built_in">UITableViewCell</span> alloc] initWithStyle:<span class="built_in">UITableViewCellStyleDefault</span> reuseIdentifier:<span class="built_in">NSStringFromClass</span>([<span class="keyword">self</span> <span class="keyword">class</span>])];</span><br><span class="line">    &#125;</span><br><span class="line">    cell.textLabel.text = <span class="string">@"尺寸-Test"</span>;</span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>运行 看到控制台里的输出信息</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3190264-785ed1f4f45f72a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="blog_pic_1.png"></p>
+<p>可以看到，<code>dataSource</code>中重写<code>Protocol</code>定义的方法有两个地方触发:</p>
+<ol>
+<li><code>tableView</code>的 <code>didMoveToWindow</code>(<em>当<code>view</code>的<code>window object</code> 改变的时候触发</em>)  触发后直接执行了三遍。</li>
+<li><code>tableView</code>的<code>layoutSubviews</code> (<em>当<code>view</code>重新布局子视图的时候</em>) 触发后执行<code>reloadData</code>，然后执行了一遍。</li>
+</ol>
+<hr>
+<h5 id="知识扩展。"><a href="#知识扩展。" class="headerlink" title="知识扩展。"></a><a name="知识扩展">知识扩展</a>。</h5><p><code>layoutSubviews</code>的触发条件。<a href="http://www.superqq.com/blog/2015/07/27/ioskai-fa-zhi-layoutsubviewsde-zuo-yong-he-diao-yong-ji-zhi/" target="_blank" rel="noopener">详情点击</a></p>
+<blockquote>
+<ol>
+<li>直接调用<code>setLayoutSubviews</code>。（这个在上面苹果官方文档里有说明）</li>
+<li><code>addSubview</code>的时候。</li>
+<li>当<code>view</code>的<code>frame</code>发生改变的时候。</li>
+<li>滑动<code>UIScrollView</code>的时候。</li>
+<li>旋转<code>Screen</code>会触发父<code>UIView</code>上的<code>layoutSubviews</code>事件。</li>
+<li>改变一个<code>UIView</code>大小的时候也会触发父<code>UIView上</code>的<code>layoutSubviews</code>事件。</li>
+</ol>
+</blockquote>
+<p>ps： 我测试了下，把一个无子视图的<code>view</code>添加到父视图，<code>view</code>的 <code>layoutSubviews</code>会被触发。</p>
+<hr>
+<p>为了进一步确认是否是这两个方法内的调用，我将<code>CCCustomTableView</code>中的这两个方法的<code>super</code>调用注释掉，会发现重写的<code>Protocol</code>中的方法不再执行， 界面当然也不能正常显示。</p>
+<p>ps: 在 <code>didMoveToWindow</code> 中的三次调用目前我还无法理解，不知道有何作用，有大神知道麻烦解惑一下。而且我发现，单独注释掉 <code>didMoveToWindow</code>中的super调用，视图依然能够正常运行，我这边先选择性跳过了。</p>
+<p>我还发现 <code>layoutSubviews</code>调用了两次, 只有第一次主动调用<code>reloadData</code>,所以我大致的模拟下<code>UITableView</code>中关于这部分源码的实现：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一次加载时主动调用reloadData</span></span><br><span class="line">- (<span class="keyword">void</span>)layoutSubviews&#123;</span><br><span class="line">    <span class="keyword">if</span> (!_hasLayouted) &#123;</span><br><span class="line">        [<span class="keyword">self</span> reloadData];</span><br><span class="line">        _hasLayouted = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">   [<span class="keyword">super</span> layoutSubviews];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//重新加载数据的方法</span></span><br><span class="line">- (<span class="keyword">void</span>)reloadData&#123;</span><br><span class="line">    <span class="built_in">NSInteger</span> sectionsNum;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.dataSource &amp;&amp; [<span class="keyword">self</span>.dataSource respondsToSelector:<span class="keyword">@selector</span>(numberOfSectionsInTableView:)]) &#123;</span><br><span class="line">        sectionsNum =  [<span class="keyword">self</span>.dataSource numberOfSectionsInTableView:<span class="keyword">self</span>];</span><br><span class="line">        <span class="keyword">if</span> (!sectionsNum) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.numberOfSections = sectionsNum;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSMutableArray</span> *rowsNum =@[].mutableCopy;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.dataSource &amp;&amp; [<span class="keyword">self</span>.dataSource respondsToSelector:<span class="keyword">@selector</span>(tableView:numberOfRowsInSection:)]) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; sectionsNum; i++) &#123;</span><br><span class="line">            <span class="built_in">NSInteger</span> rowNum = [<span class="keyword">self</span>.dataSource tableView:<span class="keyword">self</span> numberOfRowsInSection:i];</span><br><span class="line">            [rowsNum addObject:@(rowNum)];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">//默认为1</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; sectionsNum; i++) &#123;</span><br><span class="line">            [rowsNum addObject:@<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Protocol其他方法调用</span></span><br><span class="line">    <span class="comment">//......</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据数据源提供的数据 更新视图</span></span><br><span class="line">    [<span class="keyword">self</span> updateView];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样在视图第一次加载或者之后拿到网络数据想更新视图时候， 就能根据<code>dataSource</code>提供的数据动态更新视图了。</p>
+<p>接下来就是开始干啦。</p>
+<hr>
+<h4 id="最后的最后"><a href="#最后的最后" class="headerlink" title="最后的最后"></a>最后的最后</h4><p>去除<code>tableview</code>的相关方法调用，附一张关于<code>ViewController</code>生命周期以及<code>self.view</code>上添加的子视图的生命周期，各个方法的调用时序截图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3190264-8f45840cd23d25d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="blog_pic_2.png"></p>
+<p>蟹蟹围观。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/OC/" rel="tag"># OC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/22/PHImageManager/" rel="next" title="PHImageManage详解">
+                <i class="fa fa-chevron-left"></i> PHImageManage详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/13/xcode-bugs/" rel="prev" title="靠玄学解决的iOS开发中的问题">
+                靠玄学解决的iOS开发中的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="jaderyang" />
+          <p class="site-author-name" itemprop="name">jaderyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时,直挂云帆济沧海</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇坎场景"><span class="nav-number">2.</span> <span class="nav-text">遇坎场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求索过程"><span class="nav-number">3.</span> <span class="nav-text">求索过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DataSource是什么"><span class="nav-number">3.0.1.</span> <span class="nav-text">DataSource是什么?</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#知识扩展。"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">知识扩展。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最后的最后"><span class="nav-number">3.0.2.</span> <span class="nav-text">最后的最后</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jaderyang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="theme-info">
+  <span class="post-count">博客全站共7.8k字</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
